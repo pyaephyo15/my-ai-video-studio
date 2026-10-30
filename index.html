@@ -123,16 +123,41 @@ img.hidden=false;
 function notReady(){
 alert('AI API မချိတ်ဆက်ရသေးပါ။ နောက်အဆင့်မှာ ချိတ်ဆက်ပေးပါမယ်။');
 }
-function makeStory(){
-const topic=document.getElementById('topic').value.trim();
-if(!topic){alert('ခေါင်းစဉ် အရင်ရေးပါ။');return;}
-document.getElementById('storyResult').value=
-'ခေါင်းစဉ် - '+topic+'\n\n'+
-'Scene 1: '+topic+' ရဲ့ ဇာတ်လမ်းကို စတင်မိတ်ဆက်သည်။\n\n'+
-'Scene 2: အဓိကဇာတ်ကောင်သည် စိန်ခေါ်မှုတစ်ခုနှင့် ရင်ဆိုင်ရသည်။\n\n'+
-'Scene 3: အခက်အခဲကို ကျော်ဖြတ်ရန် ကြိုးစားသည်။\n\n'+
-'Scene 4: စိတ်ဝင်စားဖွယ် အဆုံးသတ်တစ်ခု ဖြစ်ပေါ်လာသည်။';
+
+async function makeStory(){
+  const topic = document.getElementById('topic').value.trim();
+
+  if(!topic){
+    alert('ခေါင်းစဉ် အရင်ရေးပါ။');
+    return;
+  }
+
+  const result = document.getElementById('storyResult');
+  result.value = 'AI ဇာတ်လမ်းရေးနေပါတယ်...';
+
+  try {
+    const response = await fetch(
+      'https://rough-mountain-db47.pphyoaung151094.workers.dev/api/story',
+      {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({prompt: topic})
+      }
+    );
+
+    const data = await response.json();
+
+    if(!response.ok){
+      throw new Error(data.error || 'AI Error');
+    }
+
+    result.value = data.story;
+
+  } catch(error) {
+    result.value = 'အမှားဖြစ်နေပါတယ်: ' + error.message;
+  }
 }
+
 function downloadStory(){
 const text=document.getElementById('storyResult').value;
 if(!text){alert('ဇာတ်လမ်း အရင်ရေးပါ။');return;}
