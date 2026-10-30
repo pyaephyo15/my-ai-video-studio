@@ -1,0 +1,163 @@
+
+<!DOCTYPE html>
+<html lang="my">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My AI Video Studio</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#10101b;color:white;font-family:Arial,sans-serif}
+header{padding:22px;background:#19172b;text-align:center;border-bottom:1px solid #39304f}
+header h2{margin:0;color:#b99aff}
+header p{color:#aaa;font-size:13px}
+main{max-width:650px;margin:auto;padding:18px}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+nav button,.btn{background:#29243e;color:white;border:1px solid #554477;padding:12px;border-radius:10px}
+nav button.active,.primary{background:#7748dc}
+.panel{background:#1c1a2c;padding:18px;border-radius:16px;margin-bottom:15px}
+h3{color:#c6aaff;margin-top:0}
+input,textarea{width:100%;padding:13px;margin:9px 0;background:#11111d;color:white;border:1px solid #514568;border-radius:9px;font-size:15px}
+textarea{min-height:100px}
+.btn{width:100%;margin-top:10px;font-size:15px}
+.primary{border:0}
+.preview{width:100%;border-radius:12px;margin-top:12px}
+.small{font-size:12px;color:#aaa;line-height:1.7}
+.notice{background:#302747;padding:12px;border-radius:9px;color:#e1d4ff;font-size:13px;line-height:1.7}
+.tab{display:none}
+.tab.show{display:block}
+a{color:#c5a5ff}
+</style>
+</head>
+<body>
+<header>
+<h2>🎬 My AI Video Studio</h2>
+<p>ကိုယ်ပိုင် AI ဗီဒီယို ဖန်တီးရေးစတူဒီယို</p>
+</header>
+<main>
+<nav>
+<button class="active" onclick="openTab('home',this)">🏠 Home</button>
+<button onclick="openTab('image',this)">🖼️ ပုံမှ Video</button>
+<button onclick="openTab('text',this)">✍️ Text to Video</button>
+<button onclick="openTab('story',this)">📖 ဇာတ်လမ်း</button>
+<button onclick="openTab('voice',this)">🎤 မြန်မာအသံ</button>
+<button onclick="openTab('library',this)">📁 Video Library</button>
+</nav>
+
+<section id="home" class="tab show">
+<div class="panel">
+<h3>မင်္ဂလာပါ 👋</h3>
+<p>My AI Video Studio မှ ကြိုဆိုပါတယ်။</p>
+<p>ကိုယ်ပိုင် AI Video တွေ ဖန်တီးဖို့ အောက်က Features တွေကို ရွေးချယ်ပါ။</p>
+<div class="notice">ယခုအဆင့်သည် Website ရဲ့ အခြေခံပုံစံဖြစ်ပါတယ်။ AI Video API မချိတ်ဆက်ရသေးပါ။</div>
+</div>
+</section>
+
+<section id="image" class="tab">
+<div class="panel">
+<h3>🖼️ Image to Video</h3>
+<p>ဗီဒီယိုပြောင်းချင်တဲ့ပုံကို ရွေးပါ။</p>
+<input type="file" id="photo" accept="image/*" onchange="showPhoto(event)">
+<img id="photoPreview" class="preview" hidden>
+<textarea id="motion" placeholder="ဥပမာ - လူတစ်ယောက် လမ်းလျှောက်နေတဲ့ပုံစံ..."></textarea>
+<button class="btn primary" onclick="notReady()">🎬 Generate Video</button>
+<p class="small">AI Video API ချိတ်ဆက်ပြီးမှ Video အမှန်တကယ် ထုတ်လုပ်နိုင်ပါမယ်။</p>
+</div>
+</section>
+
+<section id="text" class="tab">
+<div class="panel">
+<h3>✍️ Text to Video</h3>
+<textarea id="videoPrompt" placeholder="ဖန်တီးချင်တဲ့ Video အကြောင်းရေးပါ..."></textarea>
+<button class="btn primary" onclick="notReady()">🎬 Create Video</button>
+<div class="notice">AI Video Generation API မချိတ်ဆက်ရသေးပါ။</div>
+</div>
+</section>
+
+<section id="story" class="tab">
+<div class="panel">
+<h3>📖 AI Story Writer</h3>
+<input id="topic" placeholder="ဇာတ်လမ်းခေါင်းစဉ် ရေးပါ...">
+<button class="btn primary" onclick="makeStory()">ဇာတ်လမ်းဖန်တီးရန်</button>
+<textarea id="storyResult" placeholder="ဇာတ်လမ်းရလဒ် ဒီမှာပေါ်ပါမယ်..."></textarea>
+<button class="btn" onclick="downloadStory()">📥 ဇာတ်လမ်း Download</button>
+<p class="small">လက်ရှိတွင် နမူနာဇာတ်လမ်းပုံစံဖြင့် အလုပ်လုပ်ပါတယ်။ AI API ချိတ်ပြီးမှ AI ဇာတ်လမ်းရေးနိုင်ပါမယ်။</p>
+</div>
+</section>
+
+<section id="voice" class="tab">
+<div class="panel">
+<h3>🎤 Myanmar AI Voice</h3>
+<textarea id="voiceText" placeholder="အသံထွက်စေချင်တဲ့ မြန်မာစာရေးပါ..."></textarea>
+<button class="btn primary" onclick="speak()">🔊 အသံထွက်ဖတ်ရန်</button>
+<button class="btn" onclick="speechSynthesis.cancel()">⏹️ ရပ်ရန်</button>
+<p class="small">သင့်ဖုန်း Browser မှာ မြန်မာအသံ ရှိမှသာ ဖတ်ပေးနိုင်ပါမယ်။</p>
+</div>
+</section>
+
+<section id="library" class="tab">
+<div class="panel">
+<h3>📁 My Video Library</h3>
+<p>ကိုယ်တိုင်ဖန်တီးထားတဲ့ Video ဖိုင်ကို ထည့်ပြီး Download လုပ်နိုင်ပါတယ်။</p>
+<input type="file" id="videoFile" accept="video/*" onchange="showVideo(event)">
+<video id="videoPreview" class="preview" controls hidden></video>
+<a id="downloadLink" hidden download="my-video.mp4">📥 Download Video</a>
+</div>
+</section>
+</main>
+
+<script>
+function openTab(id,btn){
+document.querySelectorAll('.tab').forEach(x=>x.classList.remove('show'));
+document.getElementById(id).classList.add('show');
+document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));
+btn.classList.add('active');
+}
+function showPhoto(e){
+const file=e.target.files[0];
+if(!file)return;
+const img=document.getElementById('photoPreview');
+img.src=URL.createObjectURL(file);
+img.hidden=false;
+}
+function notReady(){
+alert('AI API မချိတ်ဆက်ရသေးပါ။ နောက်အဆင့်မှာ ချိတ်ဆက်ပေးပါမယ်။');
+}
+function makeStory(){
+const topic=document.getElementById('topic').value.trim();
+if(!topic){alert('ခေါင်းစဉ် အရင်ရေးပါ။');return;}
+document.getElementById('storyResult').value=
+'ခေါင်းစဉ် - '+topic+'\n\n'+
+'Scene 1: '+topic+' ရဲ့ ဇာတ်လမ်းကို စတင်မိတ်ဆက်သည်။\n\n'+
+'Scene 2: အဓိကဇာတ်ကောင်သည် စိန်ခေါ်မှုတစ်ခုနှင့် ရင်ဆိုင်ရသည်။\n\n'+
+'Scene 3: အခက်အခဲကို ကျော်ဖြတ်ရန် ကြိုးစားသည်။\n\n'+
+'Scene 4: စိတ်ဝင်စားဖွယ် အဆုံးသတ်တစ်ခု ဖြစ်ပေါ်လာသည်။';
+}
+function downloadStory(){
+const text=document.getElementById('storyResult').value;
+if(!text){alert('ဇာတ်လမ်း အရင်ရေးပါ။');return;}
+const a=document.createElement('a');
+a.href=URL.createObjectURL(new Blob([text],{type:'text/plain;charset=utf-8'}));
+a.download='my-story.txt';a.click();
+}
+function speak(){
+const text=document.getElementById('voiceText').value;
+if(!text){alert('စာသား အရင်ရေးပါ။');return;}
+if(!('speechSynthesis' in window)){alert('ဒီ Browser မှာ အသံဖတ်စနစ် မရနိုင်ပါ။');return;}
+const msg=new SpeechSynthesisUtterance(text);
+msg.lang='my-MM';
+speechSynthesis.cancel();
+speechSynthesis.speak(msg);
+}
+function showVideo(e){
+const file=e.target.files[0];
+if(!file)return;
+const url=URL.createObjectURL(file);
+const video=document.getElementById('videoPreview');
+video.src=url;video.hidden=false;
+const link=document.getElementById('downloadLink');
+link.href=url;link.hidden=false;
+}
+</script>
+</body>
+</html>
